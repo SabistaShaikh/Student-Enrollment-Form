@@ -1,0 +1,25 @@
+<?php
+// Replace 'DB_HOST', 'DB_USERNAME', 'DB_PASSWORD', and 'DB_NAME' with your actual database credentials
+$connection = mysqli_connect('DB_HOST', 'DB_USERNAME', 'DB_PASSWORD', 'DB_NAME');
+
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_POST['rollNo'])) {
+    $rollNo = mysqli_real_escape_string($connection, $_POST['rollNo']);
+    
+    $query = "SELECT * FROM STUDENT_TABLE WHERE Roll_No = '$rollNo'";
+    $result = mysqli_query($connection, $query);
+    
+    if (mysqli_num_rows($result) > 0) {
+        echo "exists";
+    } else {
+        echo "not_exists";
+    }
+} else {
+    echo "error";
+}
+
+mysqli_close($connection);
+?>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Enrollment Form</title>
+    <script>
+var checkRollNoURL = 'php/check_rollno.php';
+var saveStudentURL = 'php/save_student.php';
+var updateStudentURL = 'php/update_student.php';
+
+        window.onload = function() {
+            var rollNoField = document.getElementById("rollNo");
+            var otherFields = document.querySelectorAll("input[type='text'], input[type='date']");
+            var buttons = document.querySelectorAll("input[type='submit'], input[type='reset']");
+
+            rollNoField.focus();
+
+            rollNoField.addEventListener("blur", function() {
+                var rollNo = rollNoField.value.trim();
+
+                if (rollNo !== "") {
+                    // Make an AJAX request to check if the rollNo exists in the database
+                    // Replace 'check_rollno.php' with the actual server-side file name
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "check_rollno.php", true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            var response = xhr.responseText.trim();
+                            if (response === "exists") {
+                                // Display existing data from the database
+                                displayExistingData();
+                            } else if (response === "not_exists") {
+                                // Enable Save and Reset buttons, move cursor to next field
+                                enableFields(otherFields);
+                                enableButtons(["save", "reset"]);
+                                moveCursorToNextField();
+                            }
+                        }
+                    };
+                    xhr.send("rollNo=" + encodeURIComponent(rollNo));
+                }
+            });
+
+            function displayExistingData() {
+                // Fetch existing data from the database using the rollNo
+                // Replace 'fetch_data.php' with the actual server-side file name
+                // Populate the form fields with the fetched data
+                // Enable Update and Reset buttons, move cursor to next field
+            }
+
+            function enableFields(fields) {
+                for (var i = 0; i < fields.length; i++) {
+                    fields[i].removeAttribute("disabled");
+                }
+            }
+
+            function disableFields(fields) {
+                for (var i = 0; i < fields.length; i++) {
+                    fields[i].setAttribute("disabled", "disabled");
+                }
+            }
+
+            function enableButtons(buttons) {
+                for (var i = 0; i < buttons.length; i++) {
+                    document.getElementById(buttons[i]).removeAttribute("disabled");
+                }
+            }
+
+            function disableButtons(buttons) {
+                for (var i = 0; i < buttons.length; i++) {
+                    document.getElementById(buttons[i]).setAttribute("disabled", "disabled");
+                }
+            }
+
+            function moveCursorToNextField() {
+                for (var i = 0; i < otherFields.length; i++) {
+                    if (!otherFields[i].value) {
+                        otherFields[i].focus();
+                        break;
+                    }
+                }
+            }
+        }
+    </script>
+
+
+</head>
+<body>
+<form action="php/save_student.php" method="POST">
+
+    <h1>Student Enrollment Form</h1>
+    <form action="save_student.php" method="POST">
+        <label for="rollNo">Roll No:</label>
+        <input type="text" id="rollNo" name="rollNo" required><br><br>
+        
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" disabled required><br><br>
+        
+        <label for="class">Class:</label>
+        <input type="text" id="class" name="class" disabled required><br><br>
+        
+        <label for="birthDate">Birth Date:</label>
+        <input type="date" id="birthDate" name="birthDate" disabled required><br><br>
+        
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" disabled required><br><br>
+        
+        <label for="enrollmentDate">Enrollment Date:</label>
+        <input type="date" id="enrollmentDate" name="enrollmentDate" disabled required><br><br>
+        
+        <input type="submit" value="Save" id="save" name="save">
+        <input type="submit" value="Update" id="update" name="update" >
+        <input type="reset" value="Reset" id="reset" disabled>
+
+
+    </form>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<?php
+
+// Replace 'DB_HOST', 'DB_USERNAME', 'DB_PASSWORD', and 'DB_NAME' with your actual database credentials
+$connection = mysqli_connect('DB_HOST', 'DB_USERNAME', 'DB_PASSWORD', 'DB_NAME');
+
+if (!$connection) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_POST['rollNo'], $_POST['fullName'], $_POST['class'], $_POST['birthDate'], $_POST['address'], $_POST['enrollmentDate'])) {
+    $rollNo = mysqli_real_escape_string($connection, $_POST['rollNo']);
+    $fullName = mysqli_real_escape_string($connection, $_POST['fullName']);
+    $class = mysqli_real_escape_string($connection, $_POST['class']);
+    $birthDate = mysqli_real_escape_string($connection, $_POST['birthDate']);
+    $address = mysqli_real_escape_string($connection, $_POST['address']);
+    $enrollmentDate = mysqli_real_escape_string($connection, $_POST['enrollmentDate']);
+    
+    
+    if (empty($rollNo) || empty($fullName) || empty($class) || empty($birthDate) || empty($address) || empty($enrollmentDate)) {
+        die("Error: All fields are required.");
+    }
+    
+    // 
+    $query = "SELECT * FROM STUDENT_TABLE WHERE Roll_No = '$rollNo'";
+    $result = mysqli_query($connection, $query);
+    
+    if (mysqli_num_rows($result) > 0) {
+        die("Error: Roll number already exists.");
+    }
+    
+    
+    $insertQuery = "INSERT INTO STUDENT_TABLE (Roll_No, Full_Name, Class, Birth_Date, Address, Enrollment_Date) 
+                    VALUES ('$rollNo', '$fullName', '$class', '$birthDate', '$address', '$enrollmentDate')";
+    
+    if (mysqli_query($connection, $insertQuery)) {
+        echo "Data saved successfully.";
+    } else {
+        echo "Error: " . mysqli_error($connection);
+    }
+} else {
+    echo "Error: Invalid request.";
+}
+
+mysqli_close($connection);
+?>
